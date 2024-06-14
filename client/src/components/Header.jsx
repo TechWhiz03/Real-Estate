@@ -22,13 +22,13 @@ export default function Header() {
 
               <ul className='flex gap-6 text-base sm:text-2xl font-semibold'>
                   <Link to='/'>
-                  <li className='hidden sm:inline hover:text-sky-400 active:text-sky-600 focus:outline-none focus:underline focus:text-sky-400 '>Home</li>
+                  <li className='hidden sm:inline hover:text-sky-600 active:text-sky-400 focus:outline-none focus:underline focus:text-sky-400 '>Home</li>
                   </Link>
                   <Link to='/about'>
-                  <li className='hidden sm:inline hover:text-sky-400 active:text-sky-600 focus:text-underline '>About</li>
+                  <li className='hidden sm:inline hover:text-sky-600 active:text-sky-400 focus:text-underline '>About</li>
                   </Link>    
                   <Link to='/sign-in'>
-                  <li className='sm:inline hover:text-sky-400 active:text-sky-600 focus:underline '>SignIn</li>
+                  <li className='sm:inline hover:text-sky-600 active:text-sky-400 focus:underline '>SignIn</li>
                   </Link>
               </ul>
           </div>
