@@ -27,8 +27,8 @@ export default function Header() {
                   <Link to='/about'>
                   <li className='hidden sm:inline hover:text-sky-600 active:text-sky-400'>About</li>
                   </Link>    
-                  <Link to='/sign-in'>
-                  <li className='hover:text-sky-600 active:text-sky-400'>SignIn</li>
+                  <Link to='/sign-up'>
+                  <li className='hover:text-sky-600 active:text-sky-400'>SignUp</li>
                   </Link>
               </ul>
           </div>
