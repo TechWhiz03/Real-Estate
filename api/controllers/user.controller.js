@@ -1,13 +1,13 @@
 import validator from "validator";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { ApiError } from "../utils/ApiError.js";
+import { errorHandler } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from 'jsonwebtoken';
 
 
 // SignUp
-const signUpUser = asyncHandler(async (req, res) => {
+const signUpUser = asyncHandler(async (req, res, next) => {
   const { username, email, password } = req.body;
   // console.log(req.body);
 
@@ -15,12 +15,12 @@ const signUpUser = asyncHandler(async (req, res) => {
   if (
     [ username, email, password ].some((field) => field?.trim() === "")
   ) {
-    throw new ApiError(400, "All fields are required");
+    return next(errorHandler(400, "All fields are required"));
   }
 
   // valdiates email
   if (!validator.isEmail(email)) {
-    throw new ApiError(400, "Invalid Email !");
+    return next(errorHandler(400, "Invalid Email !"));
   }
 
   // check for existing user
@@ -29,7 +29,7 @@ const signUpUser = asyncHandler(async (req, res) => {
   });
   // console.log(existedUser);
   if (existedUser) {
-    throw new ApiError(409, "User with username or email already exists !");
+    return next(errorHandler(409, "User with username or email already exists !"));
   }
 
   const user = await User.create({
@@ -43,7 +43,7 @@ const signUpUser = asyncHandler(async (req, res) => {
     "-password"
   );
   if (!createdUser) {
-    throw new ApiError(500, "Something went wrong while signing up user");
+    return next(errorHandler(500, "Something went wrong while signing up user"));
   }
 
   return res
@@ -52,18 +52,18 @@ const signUpUser = asyncHandler(async (req, res) => {
 });
 
 // Sign In
-const signInUser = asyncHandler(async (req, res) => {
+const signInUser = asyncHandler(async (req, res, next) => {
 
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
   if (!user) {
-    throw new ApiError(404, "User does not exist");
+    return next(errorHandler(404, "User does not exist"));
   }
 
   const isPasswordValid = await user.isPasswordCorrect(password);
   if (!isPasswordValid) {
-    throw new ApiError(401, "Invalid user credentials");
+    return next(errorHandler(401, "Invalid user credentials"));
   }
 
   const accessToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
