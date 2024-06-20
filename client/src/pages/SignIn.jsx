@@ -6,6 +6,7 @@ import {
   signInSuccess,
   signInFailure,
 } from '../redux/user/userSlice';
+import OAuth from '../components/OAuth';
 
 export default function SignIn() {
 
@@ -77,6 +78,7 @@ export default function SignIn() {
           className="bg-sky-600 text-white p-3 rounded-lg hover:opacity-90 active:bg-sky-500  disabled:opacity-80 ">
           {loading ? 'LOADING...' : 'SIGN IN'}
         </button>
+        <OAuth/>
       </form>
 
       <div
