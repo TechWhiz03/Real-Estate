@@ -119,33 +119,47 @@ const googleAuth = asyncHandler(async (req, res) => {
           )
         );
     } else {
-      const generatedPassword =
-        Math.random().toString(36).slice(-8) +
-        Math.random().toString(36).slice(-8);
+      const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+      const hashedPassword = await bcrypt.hash(generatedPassword, 10);
 
-      const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
-
-      const newUser = new User({
-        username:
-          req.body.name.split(' ').join('').toLowerCase() +
-          Math.random().toString(36).slice(-4),
+      const user = await User.create({
+        username: req.body.name.split(' ').join('').toLowerCase() + Math.random().toString(36).slice(-4),
         email: req.body.email,
         password: hashedPassword,
         avatar: req.body.photo,
       });
-      await newUser.save();
-      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
-      const { password: pass, ...rest } = newUser._doc;
-      res
-        .cookie('access_token', token, { httpOnly: true })
+
+      // check user creation & response
+      const createdUser = await User.findById(user._id).select(
+        "-password"
+      );
+      if (!createdUser) {
+        return next(errorHandler(500, "Something went wrong while signing up user"));
+      }
+
+      const accessToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
+
+      return res
         .status(200)
-        .json(rest);
+        .cookie(
+          "accessToken",
+          accessToken,
+          { httpOnly: true, }
+        )
+        .json(
+          new ApiResponse(
+            200,
+            {
+              user: createdUser
+            },
+            "User signed in successfully"
+          )
+        );
     }
   } catch (error) {
     next(error);
   }
 })
-
 
 export {
   signUpUser,
