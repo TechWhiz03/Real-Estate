@@ -4,6 +4,7 @@ import { errorHandler } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
 
 // SignUp
@@ -91,7 +92,7 @@ const signInUser = asyncHandler(async (req, res, next) => {
 });
 
 // Google OAuth
-const googleAuth = asyncHandler(async (req, res) => {
+const googleAuth = asyncHandler(async (req, res,next) => {
   try {
     const user = await User.findOne({ email: req.body.email })
 
