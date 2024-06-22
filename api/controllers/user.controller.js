@@ -92,7 +92,7 @@ const signInUser = asyncHandler(async (req, res, next) => {
 });
 
 // Google OAuth
-const googleAuth = asyncHandler(async (req, res,next) => {
+const googleAuth = asyncHandler(async (req, res, next) => {
   try {
     const user = await User.findOne({ email: req.body.email })
 
@@ -162,8 +162,38 @@ const googleAuth = asyncHandler(async (req, res,next) => {
   }
 })
 
+const updateUser = asyncHandler(async (req, res, next) => {
+  if (req.user.id !== req.params.id)
+    return next(errorHandler(401, 'You can only update your own account!'));
+  try {
+    if (req.body.password) {
+      req.body.password = await bcrypt.hash(req.body.password, 10);
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: {
+          username: req.body.username,
+          email: req.body.email,
+          password: req.body.password,
+          avatar: req.body.avatar,
+        },
+      },
+      { new: true }
+    );
+
+    const { password, ...rest } = updatedUser._doc;
+
+    res.status(200).json(rest);
+  } catch (error) {
+    next(error);
+  }
+})
+
 export {
   signUpUser,
   signInUser,
-  googleAuth
+  googleAuth,
+  updateUser
 }
