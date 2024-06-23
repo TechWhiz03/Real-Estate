@@ -171,11 +171,23 @@ const deleteUser = asyncHandler(async (req, res, next) => {
     return next(errorHandler(401, 'You can only delete your own account!'));
   try {
     await User.findByIdAndDelete(req.params.id);
-    
+
     return res
       .clearCookie('accessToken')
       .status(200)
-      .json(new ApiResponse(200,{}, "User deleted successfully"));
+      .json(new ApiResponse(200, {}, "User deleted successfully"));
+  } catch (error) {
+    next(error);
+  }
+})
+
+// SignOut User
+const signOutUser = asyncHandler(async (req, res, next) => {
+  try {
+    res
+      .clearCookie('accessToken')
+      .status(200)
+      .json('User has been logged out!');
   } catch (error) {
     next(error);
   }
@@ -186,5 +198,6 @@ export {
   signInUser,
   googleAuth,
   updateUser,
-  deleteUser
+  deleteUser,
+  signOutUser
 }
