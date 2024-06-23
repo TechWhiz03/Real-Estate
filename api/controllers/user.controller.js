@@ -72,20 +72,8 @@ const signInUser = asyncHandler(async (req, res, next) => {
 
   return res
     .status(200)
-    .cookie(
-      "accessToken",
-      accessToken,
-      { httpOnly: true, }
-    )
-    .json(
-      new ApiResponse(
-        200,
-        {
-          user: rest
-        },
-        "User signed in successfully"
-      )
-    );
+    .cookie("accessToken", accessToken, { httpOnly: true, })
+    .json(new ApiResponse(200, rest, "User signed in successfully"))
 });
 
 // Google OAuth
