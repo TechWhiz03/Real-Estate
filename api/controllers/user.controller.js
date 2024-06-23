@@ -40,16 +40,15 @@ const signUpUser = asyncHandler(async (req, res, next) => {
   });
 
   // check user creation & response
-  const createdUser = await User.findById(user._id).select(
-    "-password"
-  );
+  const createdUser = await User.findById(user._id)
   if (!createdUser) {
     return next(errorHandler(500, "Something went wrong while signing up user"));
   }
+  const { password: pass, ...rest } = createdUser._doc;
 
   return res
     .status(201)
-    .json(new ApiResponse(201, createdUser, "SignUp Successful"));
+    .json(new ApiResponse(201, rest, "SignUp Successful"));
 });
 
 // Sign In
@@ -69,9 +68,7 @@ const signInUser = asyncHandler(async (req, res, next) => {
 
   const accessToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
 
-  const signedInUser = await User.findOne(user._id).select(
-    "-password"
-  );
+  const { password: pass, ...rest } = user._doc;
 
   return res
     .status(200)
@@ -84,7 +81,7 @@ const signInUser = asyncHandler(async (req, res, next) => {
       new ApiResponse(
         200,
         {
-          user: signedInUser
+          user: rest
         },
         "User signed in successfully"
       )
@@ -99,26 +96,12 @@ const googleAuth = asyncHandler(async (req, res, next) => {
     if (user) {
       const accessToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
 
-      const signedInUser = await User.findOne(user._id).select(
-        "-password"
-      );
+      const { password: pass, ...rest } = user._doc;
 
       return res
         .status(200)
-        .cookie(
-          "accessToken",
-          accessToken,
-          { httpOnly: true, }
-        )
-        .json(
-          new ApiResponse(
-            200,
-            {
-              user: signedInUser
-            },
-            "User signed in successfully"
-          )
-        );
+        .cookie("accessToken", accessToken, { httpOnly: true, })
+        .json(new ApiResponse(200, rest, "User signed in successfully"));
     } else {
       const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
       const hashedPassword = await bcrypt.hash(generatedPassword, 10);
@@ -131,9 +114,9 @@ const googleAuth = asyncHandler(async (req, res, next) => {
       });
 
       // check user creation & response
-      const createdUser = await User.findById(user._id).select(
-        "-password"
-      );
+      const createdUser = await User.findById(user._id)
+      const { password: pass, ...rest } = createdUser._doc;
+
       if (!createdUser) {
         return next(errorHandler(500, "Something went wrong while signing up user"));
       }
@@ -142,26 +125,15 @@ const googleAuth = asyncHandler(async (req, res, next) => {
 
       return res
         .status(200)
-        .cookie(
-          "accessToken",
-          accessToken,
-          { httpOnly: true, }
-        )
-        .json(
-          new ApiResponse(
-            200,
-            {
-              user: createdUser
-            },
-            "User signed in successfully"
-          )
-        );
+        .cookie("accessToken", accessToken, { httpOnly: true, })
+        .json(new ApiResponse(200, rest, "User signed in successfully"));
     }
   } catch (error) {
     next(error);
   }
 })
 
+// Update User Details
 const updateUser = asyncHandler(async (req, res, next) => {
   if (req.user.id !== req.params.id)
     return next(errorHandler(401, 'You can only update your own account!'));
@@ -185,7 +157,9 @@ const updateUser = asyncHandler(async (req, res, next) => {
 
     const { password, ...rest } = updatedUser._doc;
 
-    res.status(200).json(rest);
+    return res
+      .status(200)
+      .json(new ApiResponse(200, rest, "Account details updated successfully"));
   } catch (error) {
     next(error);
   }

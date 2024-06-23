@@ -35,7 +35,7 @@ export default function Header() {
                         {currentUser
                             ? (<img
                                 className='rounded-full h-7 w-7 object-cover'
-                                src={currentUser.data.user.avatar} alt="profile" />)
+                                src={currentUser.data.avatar} alt="profile" />)
                             : (<li className='hover:text-sky-600 active:text-sky-400'>Sign In</li>)
                         }
                     </Link>

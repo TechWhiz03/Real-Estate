@@ -2,15 +2,24 @@ import { useSelector } from 'react-redux'
 import { useEffect, useRef, useState } from 'react'
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 import { app } from '../firebase'
+import {
+  updateUserStart,
+  updateUserSuccess,
+  updateUserFailure,
+} from '../redux/user/userSlice';
+import { useDispatch } from 'react-redux';
 
 export default function Profile() {
 
-  const { currentUser } = useSelector(state => state.user)
+  const { currentUser, loading, error } = useSelector(state => state.user)
   const fileRef = useRef(null)
+  const dispatch = useDispatch();
+
   const [ file, setFile ] = useState(undefined)
   const [ filePerc, setFilePerc ] = useState(0);
   const [ fileUploadError, setFileUploadError ] = useState(false);
   const [ formData, setFormData ] = useState({});
+  const [ updateSuccess, setUpdateSuccess ] = useState(false);
 
   useEffect(() => {
     if (file) {
@@ -41,6 +50,32 @@ export default function Profile() {
     );
   }
 
+  const handleChange = (e) => {
+    setFormData({ ...formData, [ e.target.id ]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(updateUserStart());
+      const res = await fetch(`/api/user/update/${currentUser.data._id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(updateUserFailure(data.message));
+        return;
+      }
+      dispatch(updateUserSuccess(data));
+      setUpdateSuccess(true);
+    } catch (error) {
+      dispatch(updateUserFailure(error.message));
+    }
+  };
 
   return (
     <div
@@ -51,6 +86,7 @@ export default function Profile() {
       </h1>
 
       <form
+        onSubmit={handleSubmit}
         className='flex flex-col gap-4'>
         <input
           onChange={(e) => setFile(e.target.files[ 0 ])}
@@ -62,7 +98,7 @@ export default function Profile() {
         <img
           onClick={() => fileRef.current.click()}
           className='rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2'
-          src={formData.avatar || currentUser.data.user.avatar} alt="profile" />
+          src={formData.avatar || currentUser.data.avatar} alt="profile" />
         <p className='text-sm self-center'>
           {fileUploadError ? (
             <span className='text-red-700'>
@@ -80,24 +116,30 @@ export default function Profile() {
           type="text"
           placeholder='username'
           id='username'
+          defaultValue={currentUser.data.username}
           className='border p-3 rounded-lg'
+          onChange={handleChange}
         />
         <input
-          type="text"
+          type="email"
           placeholder='email'
           id='email'
+          defaultValue={currentUser.data.email}
           className='border p-3 rounded-lg'
+          onChange={handleChange}
         />
         <input
-          type="text"
+          type="password"
           placeholder='password'
           id='password'
           className='border p-3 rounded-lg'
+          onChange={handleChange}
         />
 
         <button
+          disabled={loading}
           className='bg-sky-600 text-white p-3 rounded-lg hover:opacity-90 active:bg-sky-500  disabled:opacity-80'>
-          UPDATE
+          {loading ? 'Loading...' : 'UPDATE'}
         </button>
       </form>
 
@@ -112,6 +154,12 @@ export default function Profile() {
           Sign Out
         </span>
       </div>
+
+      <p className='text-red-700 mt-5'>
+        {error ? error : ''}</p>
+      <p className='text-green-700 mt-5'>
+        {updateSuccess ? 'User is updated successfully!' : ''}
+      </p>
     </div>
   )
 }
