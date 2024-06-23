@@ -165,9 +165,26 @@ const updateUser = asyncHandler(async (req, res, next) => {
   }
 })
 
+// Delete User
+const deleteUser = asyncHandler(async (req, res, next) => {
+  if (req.user.id !== req.params.id)
+    return next(errorHandler(401, 'You can only delete your own account!'));
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    
+    return res
+      .clearCookie('accessToken')
+      .status(200)
+      .json(new ApiResponse(200,{}, "User deleted successfully"));
+  } catch (error) {
+    next(error);
+  }
+})
+
 export {
   signUpUser,
   signInUser,
   googleAuth,
-  updateUser
+  updateUser,
+  deleteUser
 }
