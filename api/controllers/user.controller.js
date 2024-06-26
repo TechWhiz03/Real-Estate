@@ -183,7 +183,7 @@ const signOutUser = asyncHandler(async (req, res, next) => {
 })
 
 // Get User Listing
-export const getUserListings = asyncHandler(async (req, res, next) => {
+const getUserListings = asyncHandler(async (req, res, next) => {
   if (req.user.id === req.params.id) {
     try {
       const listings = await Listing.find({ userRef: req.params.id });
