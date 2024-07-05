@@ -23,13 +23,20 @@ export default function ListingItem({ listing }) {
                     <p className='text-sm text-gray-600 line-clamp-2'>
                         {listing.description}
                     </p>
-                    <p className='text-sky-600 mt-2 font-semibold '>
-                        ₹
-                        {listing.offer
-                            ? listing.discountPrice.toLocaleString('en-India')
-                            : listing.regularPrice.toLocaleString('en-India')}
-                        {listing.type === 'rent' && ' / month'}
-                    </p>
+                    <div className="flex">
+                        <p className='text-sky-600 mt-2 font-semibold flex-1 '>
+                            ₹
+                            {listing.offer
+                                ? listing.discountPrice.toLocaleString('en-India')
+                                : listing.regularPrice.toLocaleString('en-India')}
+                            {listing.type === 'rent' && ' / month'}
+                        </p>
+                        {listing.offer && (
+                            <p className='bg-green-700 max-w-[100px] text-white text-center p-1 rounded-md flex-1'>
+                                OFFER
+                            </p>
+                        )}
+                    </div>
                     <div className='text-sky-700 flex gap-4'>
                         <div className='font-bold text-xs'>
                             {listing.bedrooms > 1
