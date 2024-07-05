@@ -27,8 +27,8 @@ export default function ListingItem({ listing }) {
                         <p className='text-sky-600 mt-2 font-semibold flex-1 '>
                             ₹
                             {listing.offer
-                                ? listing.discountPrice.toLocaleString('en-India')
-                                : listing.regularPrice.toLocaleString('en-India')}
+                                ? listing.discountPrice.toLocaleString('en-IN')
+                                : listing.regularPrice.toLocaleString('en-IN')}
                             {listing.type === 'rent' && ' / month'}
                         </p>
                         {listing.offer && (
