@@ -310,7 +310,7 @@ export default function UpdateListing() {
                             <div className='flex items-center gap-2'>
                                 <input
                                     type='number'
-                                    id='discontedPrice'
+                                    id='discountPrice'
                                     required
                                     className='p-2 border border-gray-300 rounded-lg'
                                     onChange={handleChange}
