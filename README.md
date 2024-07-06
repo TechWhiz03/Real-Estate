@@ -33,13 +33,4 @@ You can view a live demo of this project [here](https://real-estate-515x.onrende
 - Redux Toolkit
 
 ## Screenshots
-![alt text](<Screenshot 2024-07-06 115108.png>)
-![alt text](<Screenshot 2024-07-06 115243.png>)
-![alt text](<Screenshot 2024-07-06 115255.png>)
-![alt text](<Screenshot 2024-07-06 115310.png>)
-![alt text](<Screenshot 2024-07-06 115413.png>)
-![alt text](<Screenshot 2024-07-06 115443.png>)
-![alt text](<Screenshot 2024-07-06 115703.png>)
-![alt text](<Screenshot 2024-07-06 115727.png>)
-![alt text](<Screenshot 2024-07-06 115919.png>)
-![alt text](<Screenshot 2024-07-06 120159.png>)
+assets/Screenshot 2024-07-06 115108.png
