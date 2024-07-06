@@ -33,4 +33,4 @@ You can view a live demo of this project [here](https://real-estate-515x.onrende
 - Redux Toolkit
 
 ## Screenshots
-assets/Screenshot 2024-07-06 115108.png
+![alt text](<Screenshot 2024-07-06 115108.png>)
